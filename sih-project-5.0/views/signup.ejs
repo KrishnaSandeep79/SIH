@@ -1,0 +1,47 @@
+<html>
+    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="/assets/signup.js"></script>
+<script src="./assets/sra.js"></script>
+<script src="./assets/recorder.js"></script>
+<script>
+
+var recorder;
+var audio_context;
+
+function onMediaSuccess(stream, callback, secondsOfAudio) {
+    audio_context = audio_context || new window.AudioContext;
+    var input = audio_context.createMediaStreamSource(stream);
+    recorder = new Recorder(input);
+    recorder.record();
+
+	setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
+}
+
+function onMediaError(e) {
+    console.error('media error', e);
+}
+
+function StopListening(callback){
+	console.log('...working...');
+    recorder && recorder.stop();
+    recorder.exportWAV(function(blob) {
+        callback(blob);
+    });
+    recorder.clear();
+}
+
+</script>
+<label>enter username</label>
+<input type="text" id="username"><br><br>
+<label>enter emailid</label>
+<input type="email" id="emailid"><br><br>
+<input type="text" id="guid" hidden>
+<p> use predefined phrase, use this phrases</p><br><br>
+<!-- <p onload="getVerificationPhrases()"></p> -->
+<h3>"i am going to make him an offer he cannot refuse"</h3><br><br>
+<b>IMPORTANT! we need 3 voice samples, so click register button exactly 3times!, so that we can get 3 voice samples</b><br><br>
+<pre id="log" hidden></pre>
+<button name="register" id="record" onclick="enrollNewVerificationProfile()">register</button><br><br>
+<button name="signup" id="submit">login</button><br><br>
+</html>

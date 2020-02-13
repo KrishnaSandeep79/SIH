@@ -1,0 +1,51 @@
+<html>
+    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="/assets/login.js"></script>
+<script src="./assets/sra.js"></script>
+<script src="./assets/recorder.js"></script>
+<script>
+
+var recorder;
+var audio_context;
+
+function onMediaSuccess(stream, callback, secondsOfAudio) {
+    audio_context = audio_context || new window.AudioContext;
+    var input = audio_context.createMediaStreamSource(stream);
+    recorder = new Recorder(input);
+    recorder.record();
+
+	setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
+}
+
+function onMediaError(e) {
+    console.error('media error', e);
+}
+
+function StopListening(callback){
+	console.log('...working...');
+    recorder && recorder.stop();
+    recorder.exportWAV(function(blob) {
+        callback(blob);
+    });
+    recorder.clear();
+}
+
+</script>
+<label>enter username</label>
+<input type="text" id="username"><br><br>
+<button name="record" id="record">check</button><br>
+<% if (Object.entries(p).length === 0 && p.constructor === Object) {%>
+<% } else{ %>
+  <h2 id="guid" ><%= p.guid %></h2>
+  
+<% } %>
+<p id="id" hidden></p>
+<pre id="log" hidden></pre>
+<label>no account ?-> </label>
+<a href='/signup'>sign up here</a><br><br>
+<p>speak this :</p>
+<p>Im going to make him an offer he cannot refuse</p><br>
+<!--<button name="record" id="record">getGUID</button><br><br> -->
+<button name="record" onclick="startListeningForVerification()">Post Attendance</button><br><br>
+</html>
